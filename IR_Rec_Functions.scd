@@ -38,19 +38,29 @@
 };
 
 ~writeAudioToDisk = {
-	var time = Date.getDate.stamp;
+	var time, frFolder, irFolder;
+	time = Date.getDate.stamp;
 
-	if(~impResponseBuf != nil,{
+	if(~impResponseBuf != nil, {
 
-		~objName = ~name ++ "_%_%_%_%_env".format(48000, ~dur, ~tail, ~roundTripLatency);
+		frFolder = (~folderName ++ ~writePathFR).standardizePath;
+		irFolder = (~folderName ++ ~writePathIR).standardizePath;
 
-		~impulseName = ~name ++ "_%_%_%".format(48000, ~dur, "IR");
+		if(File.exists(frFolder).not, {
+			File.mkdir(frFolder)
+		});
 
-		~objBuf.write(~writePathFR ++ "/%_%.%".format(~objName, time, "wav"), "wav");
+		if(File.exists(irFolder).not, {
+			File.mkdir(irFolder)
+		});
 
-		~impResponseBuf.write(~writePathIR ++ "/%_%.%".format(~impulseName, time, "wav"), "wav");
+		~objName = ~name ++ "_%_%_%_%_env".format(s.sampleRate, ~dur, ~tail, ~roundTripLatency);
 
-		s.sync;
+		~impulseName = ~name ++ "_%_%_%".format(s.sampleRate, ~dur, "IR");
+
+		~objBuf.write(frFolder ++ "%_%.%".format(~objName, time, "wav"), "wav");
+
+		~impResponseBuf.write(irFolder ++ "%_%.%".format(~impulseName, time, "wav"), "wav");
 
 		"% has been saved".format(~objName).postln;
 
@@ -91,7 +101,7 @@
 
 	~impResponseBuf.loadToFloatArray(action: {|array|
 		a = array;
-		{~irView.setData(array[0..(array.size / 2).asInteger], channels: 1, samplerate: s.sampleRate.asInteger)}.defer});
+		{~irView.setData(array[0..((array.size / 2) / 2).asInteger], channels: 1, samplerate: s.sampleRate.asInteger)}.defer});
 
 	s.sync;
 
@@ -166,7 +176,7 @@
 
 	ifft = freqResponse.real.irfft(freqResponse.imag, fftInfo[2]);
 
-	Buffer.loadCollection(s, (ifft)).normalize
+	Buffer.loadCollection(s, (ifft[0..(ifft.size/2).asInteger]).normalize)
 };
 
 ~updateBuf = {|buffer, dur|

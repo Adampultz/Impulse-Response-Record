@@ -1,19 +1,27 @@
 
-var win, inChan, outChan, startFreq, endFreq, freqTextAnchor = [140, 150],
-chanAnchor = [140, 70], inChanText, outChanText, genImpResp, saveImpresp, monitorResponse,
+var win, inChan, outChan, startFreq, endFreq, freqTextAnchor = [140, 160],
+chanAnchor = [140, 100], inChanText, outChanText, genImpResp, saveImpresp, monitorResponse,
 freqText = 2.collect{}, chanText = 2.collect{}, rountTripLatency, systemDelayText, fileNameText,
-sweepTime, tail, sweepTimeText, tailText;
+sweepTime, tail, sweepTimeText, tailText, folderName;
 
 win = Window("Impulse response recording", Rect(128, 64, 800, 800));
 
-fileNameText = TextField(win, Rect(10, 25, 600, 25));
+folderName = DragSink(win, Rect(10, 10, 600, 25));
+folderName.string = "%".format(~folderName);
+folderName.action = {|field|
+	~folderName  = "%".format(field.value);
+	~folderName.postln;
+};
+
+fileNameText = TextField(win, Rect(10, 50, 600, 25));
 fileNameText.string = "%".format(~name);
 fileNameText.action = {|field|
 	var date = Date.getDate.stamp.asString;
 	~name = "%".format(field.value);
 	~objName = ~name ++ "_%_%_%_%".format("objectResponse", s.sampleRate, ~dur, ~roundTripLatency);
 	~impulseName = ~name ++ "_%_%_%".format("impulseResponse", s.sampleRate, ~dur);
-	"Audio files will be saved with: %".format(~name).postln;
+	"Object responses will be saved with: %".format(~objName).postln;
+	"Impulse responses will be saved with: %".format(~impulseName).postln;
 };
 
 inChan = NumberBox(win, Rect(chanAnchor[0], chanAnchor[1], 60, 20));
@@ -43,7 +51,7 @@ endFreq.action = {|field|
 freqText[0] = StaticText(win, Rect(10, freqTextAnchor[1], 100, 20)).string = "Start Frequency";
 freqText[1] = StaticText(win, Rect(10, freqTextAnchor[1] + 30, 100, 20)).string = "End Frequency";
 
-sweepTime = NumberBox(win, Rect(140, 230, 60, 20));
+sweepTime = NumberBox(win, Rect(140, freqTextAnchor[1] + 60 , 60, 20));
 sweepTime.value = ~recDur;
 sweepTime.action = {|field|
 	~recDur = field.value;
@@ -52,39 +60,39 @@ sweepTime.action = {|field|
 
 };
 
-tail = NumberBox(win, Rect(140, 260, 60, 20));
+tail = NumberBox(win, Rect(140, freqTextAnchor[1] + 90, 60, 20));
 tail.value = ~tail;
 tail.action = {|field|
 	~tail = field.value;
 	~dur = ~recDur + ~tail;
 };
 
-sweepTimeText = StaticText(win, Rect(10, 230, 100, 20)).string = "Sweep time";
-tailText = StaticText(win, Rect(10, 260, 100, 20)).string = "Tail";
+sweepTimeText = StaticText(win, Rect(10, freqTextAnchor[1] + 60, 100, 20)).string = "Sweep time";
+tailText = StaticText(win, Rect(10, freqTextAnchor[1] + 90, 100, 20)).string = "Tail";
 
 
-genImpResp = Button(win, Rect(250, 60, 100, 40))
+genImpResp = Button(win, Rect(250, chanAnchor[1], 100, 40))
 .states_([
 	["Play Sine", Color.black, Color.white]])
 .mouseDownAction_({|val| ~playTestSignal.fork});
 
-monitorResponse = Button(win, Rect(250, 120, 100, 40))
+monitorResponse = Button(win, Rect(250, chanAnchor[1] + 60, 100, 40))
 .states_([
 	["Monitor Response", Color.black, Color.white]])
 .mouseDownAction_({|val| ~objBuf.play});
 
-monitorResponse = Button(win, Rect(250, 180, 100, 40))
+monitorResponse = Button(win, Rect(250, chanAnchor[1] + 120, 100, 40))
 .states_([
 	["Monitor Impulse Response", Color.black, Color.white]])
 .mouseDownAction_({|val| ~impResponseBuf.play});
 
-saveImpresp = Button(win, Rect(250, 240, 100, 40))
+saveImpresp = Button(win, Rect(250, chanAnchor[1] + 180, 100, 40))
 .states_([
 	["Save response", Color.black, Color.white]])
 .mouseDownAction_({~writeAudioToDisk.fork});
 
-systemDelayText = TextField(win, Rect(530, 60, 50, 40));
-rountTripLatency = Button(win, Rect(380, 60, 130, 40))
+systemDelayText = TextField(win, Rect(530, freqTextAnchor[1], 50, 40));
+rountTripLatency = Button(win, Rect(380, freqTextAnchor[1], 130, 40))
 .states_([
 	["Get system delay", Color.black, Color.white]])
 .mouseDownAction_({|val|
@@ -92,9 +100,9 @@ rountTripLatency = Button(win, Rect(380, 60, 130, 40))
 	{systemDelayText.string = "%".format(~roundTripLatency)}.defer(1.2)
 });
 
-~sfView = SoundFileView(win, Rect(10, 300, 600, 150));
+~sfView = SoundFileView(win, Rect(10, freqTextAnchor[1] + 200, 600, 150));
 
-~irView = SoundFileView(win, Rect(10, 550, 600, 150));
+~irView = SoundFileView(win, Rect(10, freqTextAnchor[1] + 400, 600, 150));
 
 
 win.front;
