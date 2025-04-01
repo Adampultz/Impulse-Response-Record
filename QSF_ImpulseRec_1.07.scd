@@ -5,7 +5,7 @@ s.options.numOutputBusChannels_(6);
 s.options.hardwareBufferSize = 64;
 s.recHeaderFormat = "wav";
 
-~interface = "Fireface UCX (23732049)"
+~interface = "Fireface UCX (23732049)";
 
 s.options.outDevice_(~interface);
 
