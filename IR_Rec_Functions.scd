@@ -169,6 +169,12 @@
 	real.normalizeMagnitude;
 
 	complex = rfft(real, fftInfo[2]);
+
+	if (~plotFreqSpectrum, {
+		{complex.magnitude.plot}.defer;
+	});
+
+	complex;
 };
 
 ~impResponse = {|freqResponse, fftInfo|
