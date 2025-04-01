@@ -5,21 +5,11 @@ s.options.numOutputBusChannels_(6);
 s.options.hardwareBufferSize = 64;
 s.recHeaderFormat = "wav";
 
-s.options.outDevice_(
-	// "Built-in Output"
-	"Fireface UCX (23732049)"
-	// "MixPre-6 II"
-	// "Scarlett 2i2 USB"
-	//"Komplete Audio 6"
-);
+~interface = "Fireface UCX (23732049)"
 
-s.options.inDevice_(
-	"Fireface UCX (23732049)"
-	// "Built-in Input"
-	// "MixPre-6 II"
-	// "Scarlett 2i2 USB"x
-	//"Komplete Audio 6"
-);
+s.options.outDevice_(~interface);
+
+s.options.inDevice_(~interface);
 
 ~recDur = 7.0;
 ~tail = 4;
@@ -33,10 +23,6 @@ s.options.inDevice_(
 ~objName = ~name ++ "_%_%_env".format(s.sampleRate, ~dur);
 ~impulseName = ~name ++ "_%_%_%".format(s.sampleRate, ~dur, "impulseResponse");
 ~sineName = "SineExpGuiTest_%_%_env".format(s.sampleRate, ~dur);
-
-// Drop your folder for storing IRs here. It has to look like:
-// ~writePath = "folder/anotherFolder/folderForIrs/";
-~writePath = ;
 
 ~writePathFR = "Frequency Responses/";
 ~writePathIR = "Impulse Responses/";
