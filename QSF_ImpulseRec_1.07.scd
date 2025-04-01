@@ -6,14 +6,17 @@ s.options.hardwareBufferSize = 64;
 s.recHeaderFormat = "wav";
 
 s.options.outDevice_(
-	 //"Built-in Output"
-   "Fireface UCX (23732049)"
+	// "Built-in Output"
+	"Fireface UCX (23732049)"
+	// "MixPre-6 II"
 	// "Scarlett 2i2 USB"
 	//"Komplete Audio 6"
 );
 
 s.options.inDevice_(
 	"Fireface UCX (23732049)"
+	// "Built-in Input"
+	// "MixPre-6 II"
 	// "Scarlett 2i2 USB"x
 	//"Komplete Audio 6"
 );
@@ -23,16 +26,20 @@ s.options.inDevice_(
 ~waitTime = 1;
 ~dur = ~recDur + ~tail;
 
+~plotFreqSpectrum = true;
+
+~folderName = "Drop your folder address here";
 ~name = "Write object name here";
 ~objName = ~name ++ "_%_%_env".format(s.sampleRate, ~dur);
 ~impulseName = ~name ++ "_%_%_%".format(s.sampleRate, ~dur, "impulseResponse");
 ~sineName = "SineExpGuiTest_%_%_env".format(s.sampleRate, ~dur);
 
-~writePath = "/Users/adammac2023/Documents/Musik-business/Projects/Queer Sonic Fingerprint/Audio/Impulse_Responses/Naturkundemuseum/";
+// Drop your folder for storing IRs here. It has to look like:
+// ~writePath = "folder/anotherFolder/folderForIrs/";
+~writePath = ;
 
-// ~writePath = "/Users/adammac2023/Documents/Musik-business/Adam/2024/Speculative Sound Synthesis/Audio";
-~writePathFR = ~writePath ++  "Frequency responses/FR/";
-~writePathIR = ~writePath ++ "IR";
+~writePathFR = "Frequency Responses/";
+~writePathIR = "Impulse Responses/";
 
 
 ~sineBuf = Bus.audio(s);
